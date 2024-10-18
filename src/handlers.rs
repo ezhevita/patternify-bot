@@ -47,8 +47,22 @@ pub async fn process_inline_query(bot: Bot, query: InlineQuery) -> ResponseResul
 }
 
 pub async fn process_reply(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
+    let response = _process_reply(bot, msg, cmd).send().await;
+
+    if let Err(err) = response {
+        log::error!("Error in handler: {:?}", err);
+    }
+
+    respond(())
+}
+
+fn _process_reply(bot: Bot, msg: Message, cmd: Command) -> JsonRequest<SendMessage> {
     let reply_message = msg.reply_to_message().unwrap();
     let text_to_process = reply_message.text().or(reply_message.caption()).unwrap();
+
+    let response = bot
+        .send_message(msg.chat.id, text_to_process)
+        .reply_parameters(ReplyParameters::new(reply_message.id));
 
     let mut entities_to_send = reply_message
         .entities()
@@ -56,24 +70,17 @@ pub async fn process_reply(bot: Bot, msg: Message, cmd: Command) -> ResponseResu
         .map_or_else(|| Vec::new(), |x| x.to_vec());
 
     let result = match cmd {
-        Command::Patternify(pattern) => spoilerify(text_to_process, &pattern),
+        Command::Patternify(pattern) if !pattern.is_empty() => {
+            spoilerify(text_to_process, &pattern)
+        }
+        _ => return response.text("No pattern provided."),
     };
 
     assert!(!result.is_empty());
 
     entities_to_send.extend(result.into_iter());
 
-    let response = bot
-        .send_message(msg.chat.id, text_to_process)
-        .entities(entities_to_send)
-        .reply_parameters(ReplyParameters::new(reply_message.id))
-        .await;
-
-    if let Err(err) = response {
-        log::error!("Error in handler: {:?}", err);
-    }
-
-    respond(())
+    response.entities(entities_to_send)
 }
 
 pub async fn process_message(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
@@ -83,7 +90,7 @@ pub async fn process_message(bot: Bot, msg: Message, cmd: Command) -> ResponseRe
         log::error!("Error in handler: {:?}", err);
     }
 
-    return Ok(());
+    respond(())
 }
 
 fn _process_message(bot: Bot, msg: Message, cmd: Command) -> JsonRequest<SendMessage> {
