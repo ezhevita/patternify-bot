@@ -16,7 +16,7 @@ COPY src src/
 
 ARG TARGETARCH
 SHELL ["/bin/bash", "-c"]
-RUN cargo build --release --target $BUILDTARGET
+RUN touch src/main.rs && cargo build --release --target $BUILDTARGET
 RUN mkdir /out/ && cp /src/target/$BUILDTARGET/release/patternify-bot /out/patternify-bot
 
 FROM scratch
