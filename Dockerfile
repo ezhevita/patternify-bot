@@ -14,8 +14,6 @@ RUN mkdir -p src \
 
 COPY src src/
 
-ARG TARGETARCH
-SHELL ["/bin/bash", "-c"]
 RUN touch src/main.rs && cargo build --release --target $BUILDTARGET
 RUN mkdir /out/ && cp /src/target/$BUILDTARGET/release/patternify-bot /out/patternify-bot
 
