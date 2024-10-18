@@ -16,3 +16,7 @@ You can use it:
 - by using a command with pattern and text: `/patternify <pattern without spaces> <text>`
 - by replying on a message with a pattern: `/patternify <pattern>`
 - in inline mode: `@PatternifyBot <pattern without spaces> <text>`
+
+## How to host it?
+
+`docker run -d -e TELOXIDE_TOKEN=12345678:YOUR_TOKEN_HERE --name patternify-bot ghcr.io/ezhevita/patternify-bot`
