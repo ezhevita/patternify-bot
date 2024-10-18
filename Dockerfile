@@ -6,7 +6,13 @@ ENV BUILDTARGET="x86_64-unknown-linux-musl"
 
 FROM build-${TARGETARCH} AS build
 WORKDIR /src
-COPY . .
+
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir -p src \
+    && echo "fn main() {}" > src/main.rs \
+    && cargo build --release --target=$BUILDTARGET --locked
+
+COPY src src/
 
 ARG TARGETARCH
 SHELL ["/bin/bash", "-c"]
