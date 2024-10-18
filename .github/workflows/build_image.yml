@@ -62,7 +62,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
-          name: v${{ github.ref }}
+          name: v${{ github.ref_name }}
           draft: false
           prerelease: false
 
