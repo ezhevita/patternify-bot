@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'patternify-bot'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=patternify-bot",
+                    "--package=patternify-bot"
+                ],
+                "filter": {
+                    "name": "patternify-bot",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "RUST_LOG": "trace"
+            },
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'patternify-bot'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=patternify-bot",
+                    "--package=patternify-bot"
+                ],
+                "filter": {
+                    "name": "patternify-bot",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
