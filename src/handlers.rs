@@ -60,6 +60,9 @@ fn _process_reply(bot: Bot, msg: Message, cmd: Command) -> JsonRequest<SendMessa
     let reply_message = msg.reply_to_message().unwrap();
     let text_to_process = reply_message.text().or(reply_message.caption()).unwrap();
 
+    let response = bot.send_message(msg.chat.id, text_to_process)
+        .reply_parameters(ReplyParameters::new(msg.id));
+
     let mut entities_to_send = reply_message
         .entities()
         .or(reply_message.caption_entities())
@@ -70,9 +73,7 @@ fn _process_reply(bot: Bot, msg: Message, cmd: Command) -> JsonRequest<SendMessa
             spoilerify(text_to_process, &pattern)
         }
         _ => {
-            return bot
-                .send_message(msg.chat.id, "No pattern provided.")
-                .reply_parameters(ReplyParameters::new(msg.id))
+            return response.text("No pattern provided.")
         }
     };
 
@@ -80,9 +81,7 @@ fn _process_reply(bot: Bot, msg: Message, cmd: Command) -> JsonRequest<SendMessa
 
     entities_to_send.extend(result.into_iter());
 
-    bot.send_message(msg.chat.id, text_to_process)
-        .reply_parameters(ReplyParameters::new(reply_message.id))
-        .entities(entities_to_send)
+    response.entities(entities_to_send)
 }
 
 pub async fn process_message(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
